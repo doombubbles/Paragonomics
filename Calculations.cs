@@ -62,7 +62,7 @@ public static class Calculations
         ModHelper.Warning<ParagonomicsMod>(
             $"Did not converge within {maxIterations} iterations for power {power} and hint {hint}");
 #endif
-        
+
         return (int) d;
     }
 
@@ -107,6 +107,11 @@ public static class Calculations
     }
 
     /// <summary>
+    /// Scale it so that a -28 degree paragon has scaled stats that match its relative cost investment
+    /// </summary>
+    public static float FactorForBaseDegree(float factor, int baseDegree) => 100 * ((1 / factor - 1) / baseDegree);
+
+    /// <summary>
     /// Version of <see cref="ParagonTower.GetDegreeMutator"/> that supports negatives and uses the degree directly
     /// </summary>
     public static ParagonTowerModel.PowerDegreeMutator GetDegreeMutator(ParagonTower paragon, int degree,
@@ -146,9 +151,10 @@ public static class Calculations
 
             // Make the multiplicative bonuses scale to not go -100%
             // but also increase their base effect since not including the flat modifiers
-            var factor = GetCostFactor(paragon);
-            percentPierceUp = -(100 + 10000 / (-100 + percentPierceUp / SMath.Pow(factor, 2)));
-            percentDamageUp = -(100 + 10000 / (-100 + percentDamageUp / SMath.Pow(factor, 2)));
+            var costFactor = GetCostFactor(paragon);
+            var scaledFactor = FactorForBaseDegree(costFactor, 29);
+            percentPierceUp = -(100 + 10000 / (-100 + percentPierceUp * scaledFactor));
+            percentDamageUp = -(100 + 10000 / (-100 + percentDamageUp * scaledFactor));
         }
 
         return new ParagonTowerModel.PowerDegreeMutator(degree,

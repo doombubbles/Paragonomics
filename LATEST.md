@@ -1,2 +1,3 @@
-- Fixed the sandbox setting being inverted
-- Fixed possible divide by 0 crashes if combined with price changer mods
+- Fixed for BTD6 v46
+- Fixed an issue with the Wizard Paragon phoenix when using Set Degree
+- Slightly adjusted the negative degree paragon scaling; they'll be a little stronger on average

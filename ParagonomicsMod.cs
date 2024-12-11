@@ -1,6 +1,7 @@
 using System;
 using MelonLoader;
 using BTD_Mod_Helper;
+using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
@@ -109,7 +110,10 @@ public class ParagonomicsMod : BloonsTD6Mod
                 tsm.isUpgradePopupShowing = false;
                 var cost = amount + minCost;
 
+                var tower = tsm.selectedTower.tower;
                 tsm.UpgradeTower(upgrade, index, (float) cost, cost - upgrade.cost);
+                tower.worth -= upgrade.cost;
+                tower.worth += (float) cost;
             }),
             "Do It",
             new Action(FinishPopup),
@@ -185,7 +189,7 @@ public class ParagonomicsMod : BloonsTD6Mod
         var paragonCost = gameModel.GetParagonUpgradeForTowerId(paragon.tower.towerModel.baseId).cost;
         var powerFromMoneySpent = (float) investment * degreeDataModel.moneySpentOverX /
                                   ((1 + degreeDataModel.paidContributionPenalty) * Math.Max(paragonCost, 1));
-        
+
         paragon.investmentInfo = paragon.investmentInfo with
         {
             totalInvestment = paragon.investmentInfo.totalInvestment + powerFromMoneySpent
@@ -202,5 +206,6 @@ public class ParagonomicsMod : BloonsTD6Mod
         paragon.UpdateDegree();
         paragon.PlayParagonUpgradeSound();
         paragon.Finish();
+        paragon.entity.GetBehaviorsInDependants<TowerCreateParagonTower>().ForEach(tower => tower.towerAdded = false);
     }
 }

@@ -33,8 +33,8 @@ The negative degree paragon algorithm is the same as the one for positive degree
     - i.e. -25% pierce means dividing by 125% rather than multiplying by 75%
 - The remaining applied changes are scaled by a factor based on how much the paragon upgrade costs in relation to the
   towers
-    - e.g. A full Dart Monkey paragon costs ~250k, with ~100k from the tier 5s, making the negative buffs be 2.5% per
-      degree instead of 1% per degree
+    - e.g. A full Dart Monkey paragon costs ~250k, with ~100k from the tier 5s, and since no cost investment produces degree -28,
+      the values are scaled so that degree -28 will leave that values at approximately 100k/250k = 40% final strength
 
 </details>
 

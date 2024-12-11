@@ -6,6 +6,7 @@ using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
 using Il2CppAssets.Scripts.Models.Effects;
+using Il2CppAssets.Scripts.Models.Towers;
 using Il2CppAssets.Scripts.Models.Towers.Behaviors;
 using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
 using Il2CppAssets.Scripts.Unity.UI_New.InGame;
@@ -111,5 +112,20 @@ internal static class UpgradeButton_UpdateCostVisuals
             var cost = __instance.upgradeCost.ToString(CultureInfo.InvariantCulture);
             __instance.Cost.SetText($"<color=green>{cost[..^2]}</color>{cost[^2..]}");
         }
+    }
+}
+
+[HarmonyPatch(typeof(TowerCreateParagonTower), nameof(TowerCreateParagonTower.GetParagonTowerModelTier))]
+internal static class TowerCreateParagonTower_GetParagonTowerModelTier
+{
+    [HarmonyPrefix]
+    internal static bool Prefix(TowerCreateParagonTower __instance, ref TowerModel __result)
+    {
+        var degree = __instance.paragonTower.GetCurrentDegree();
+        if (degree >= 1) return true;
+        
+        __result = __instance.behaviourModel.towerModels[0];
+        return false;
+
     }
 }
