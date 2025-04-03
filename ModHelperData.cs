@@ -2,8 +2,8 @@ namespace Paragonomics;
 
 public static class ModHelperData
 {
-    public const string WorksOnVersion = "46.0";
-    public const string Version = "1.0.2";
+    public const string WorksOnVersion = "48.0";
+    public const string Version = "1.0.3";
     public const string Name = "Paragonomics";
 
     public const string Description =

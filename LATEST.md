@@ -1,3 +1,1 @@
-- Fixed for BTD6 v46
-- Fixed an issue with the Wizard Paragon phoenix when using Set Degree
-- Slightly adjusted the negative degree paragon scaling; they'll be a little stronger on average
+- Recompiled for BTD6 v48
