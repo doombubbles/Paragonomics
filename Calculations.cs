@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BTD_Mod_Helper;
+using BTD_Mod_Helper.Extensions;
 using Il2CppAssets.Scripts.Models.Effects;
 using Il2CppAssets.Scripts.Models.Towers.Behaviors;
 using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
@@ -23,6 +24,7 @@ public static class Calculations
         <= 0 => -DegreeToPower(-d + 1),
         1 => 0,
         100 => 200000,
+        > 100 when ParagonomicsMod.LinearScalingPastLimit => d * 2000,
         _ => Math.Round((50 * Math.Pow(d, 3) + 5025 * Math.Pow(d, 2) + 168324 * d + 843000) / 600)
     };
 
@@ -36,6 +38,8 @@ public static class Calculations
                 return Math.Min(-PowerToDegree(-power) + 1, -1);
             case 200000:
                 return 100;
+            case > 200000 when ParagonomicsMod.LinearScalingPastLimit:
+                return (long) Math.Round(power / 2000);
         }
 
         const int maxIterations = 100;
@@ -76,7 +80,7 @@ public static class Calculations
     {
         var displayDegreePaths = paragon.paragonTowerModel.displayDegreePaths;
 
-        if (!displayDegreePaths.Any()) return -1;
+        if (!Enumerable.Any(displayDegreePaths)) return -1;
 
         var powerDegreeRequirements = paragon.Sim.model.paragonDegreeDataModel.powerDegreeRequirements;
 
@@ -96,12 +100,13 @@ public static class Calculations
 
         var totalTowersCost = Math.Max(gameModel.GetTower(baseId).cost, 1) * 3;
         var totalUpgradesCost = gameModel.GetTowersWithBaseId(baseId)
+            .AsIEnumerable()
             .Where(tower => !tower.isParagon)
             .SelectMany(tower => tower.appliedUpgrades)
             .Distinct()
             .Select(gameModel.GetUpgrade)
             .Sum(upgrade => Math.Max(upgrade.cost, 1));
-        var paragonUpgradesCost = Math.Max(gameModel.GetParagonUpgradeForTowerId(baseId).cost, 10);
+        var paragonUpgradesCost = Math.Max(ParagonomicsMod.GetParagonUpgrade(paragon.tower).cost, 10);
 
         return (totalTowersCost + totalUpgradesCost) / (totalTowersCost + totalUpgradesCost + paragonUpgradesCost);
     }
@@ -121,7 +126,8 @@ public static class Calculations
 
         var degreeMinusOne = degree - 1;
 
-        var attackCooldownReductionPercent = SMath.Sign(degreeMinusOne) *
+        var attackCooldownReductionPercent =
+            SMath.Sign(degreeMinusOne) *
             SMath.Round(SMath.Sqrt(SMath.Abs(degreeMinusOne) * info.attackCooldownReductionX) * 10) / 10;
         var percentPierceUp = degreeMinusOne * info.piercePercentPerDegree;
         var additionalPierceUp = degreeMinusOne * info.pierceIncreasePerDegree;
@@ -137,7 +143,8 @@ public static class Calculations
         var bonusBossDamagePercent = 0f;
         if (degree >= info.bonusBossDamagePerDegrees)
         {
-            bonusBossDamagePercent = degree / (float) info.bonusBossDamagePerDegrees * info.bonusBossDamagePercent;
+            // ReSharper disable once PossibleLossOfFraction
+            bonusBossDamagePercent = degree / info.bonusBossDamagePerDegrees * info.bonusBossDamagePercent;
         }
 
         var displayDegreeIndex = GetDisplayDegreeIndex(paragon, degree) + 1;

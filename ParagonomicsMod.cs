@@ -1,12 +1,13 @@
 using System;
 using MelonLoader;
 using BTD_Mod_Helper;
-using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
+using Il2CppAssets.Scripts.Models.Towers.Upgrades;
 using Il2CppAssets.Scripts.Simulation.Towers;
 using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
+using Il2CppAssets.Scripts.Unity;
 using Il2CppAssets.Scripts.Unity.UI_New.InGame;
 using Il2CppAssets.Scripts.Unity.UI_New.InGame.TowerSelectionMenu;
 using Il2CppAssets.Scripts.Unity.UI_New.Popups;
@@ -14,6 +15,7 @@ using Paragonomics;
 
 [assembly: MelonInfo(typeof(ParagonomicsMod), ModHelperData.Name, ModHelperData.Version, ModHelperData.RepoOwner)]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
+[assembly: MelonOptionalDependencies("BuffsInShop")]
 
 namespace Paragonomics;
 
@@ -33,6 +35,11 @@ public class ParagonomicsMod : BloonsTD6Mod
         icon = VanillaSprites.PerfectParagonIcon
     };
 
+    public static readonly ModSettingBool LinearScalingPastLimit = new(false)
+    {
+        description =
+            "Makes the power investment requirement scaling be linear when the degree increases beyond 100, rather than continuing to be exponentially more."
+    };
 
     public override object? Call(string operation, params object[] p) => operation switch
     {
@@ -50,9 +57,18 @@ public class ParagonomicsMod : BloonsTD6Mod
             GetDegree(paragon.investmentInfo.totalInvestment)));
     }
 
+    public static UpgradeModel GetParagonUpgrade(Tower tower)
+    {
+        var gameModel = InGame.instance != null ? InGame.Bridge.Model : Game.instance.model;
+
+        return tower.IsMutatedBy("HonoraryParagon")
+                   ? gameModel.GetUpgrade("HonoraryParagon_" + tower.towerModel.name)
+                   : gameModel.GetParagonUpgradeForTowerId(tower.towerModel.baseId);
+    }
+
     public static bool HasEnoughToShowPopup(Tower tower)
     {
-        var upgrade = InGame.Bridge.Model.GetParagonUpgradeForTowerId(tower.towerModel.baseId);
+        var upgrade = GetParagonUpgrade(tower);
 
         if (InGame.Bridge.GetCash() * MinimumCostFactor >= upgrade.cost) return true;
 
@@ -65,7 +81,8 @@ public class ParagonomicsMod : BloonsTD6Mod
         return false;
     }
 
-    public static void InvestBtnPressed(ParagonTower paragon)
+    public static void InvestBtnPressed(ParagonTower paragon, Action<double>? okCallback = null,
+        Action? cancelCallback = null)
     {
         if (!HasEnoughToShowPopup(paragon.tower)) return;
 
@@ -78,9 +95,15 @@ public class ParagonomicsMod : BloonsTD6Mod
             {
                 FinishPopup();
                 InvestInParagon(paragon, cash);
+                TowerSelectionMenu.instance.OnTowerSelectionPanelForceUpdate();
+                okCallback?.Invoke(cash);
             }),
             "Do It",
-            new Action(FinishPopup),
+            new Action(() =>
+            {
+                FinishPopup();
+                cancelCallback?.Invoke();
+            }),
             "Cancel",
             Popup.TransitionAnim.Scale,
             (int) InGame.Bridge.GetCash(),
@@ -92,7 +115,7 @@ public class ParagonomicsMod : BloonsTD6Mod
     {
         if (!HasEnoughToShowPopup(tsm.selectedTower.tower)) return;
 
-        var upgrade = tsm.Bridge.Model.GetParagonUpgradeForTowerId(tsm.selectedTower.tower.towerModel.baseId);
+        var upgrade = GetParagonUpgrade(tsm.selectedTower.tower);
 
         var minCost = upgrade.cost / MinimumCostFactor;
 
@@ -184,9 +207,10 @@ public class ParagonomicsMod : BloonsTD6Mod
 
     public static void InvestInParagon(ParagonTower paragon, double investment)
     {
-        var gameModel = paragon.Sim.model;
-        var degreeDataModel = gameModel.paragonDegreeDataModel;
-        var paragonCost = gameModel.GetParagonUpgradeForTowerId(paragon.tower.towerModel.baseId).cost;
+        var degreeDataModel = paragon.Sim.model.paragonDegreeDataModel;
+
+        var paragonCost = GetParagonUpgrade(paragon.tower).cost;
+
         var powerFromMoneySpent = (float) investment * degreeDataModel.moneySpentOverX /
                                   ((1 + degreeDataModel.paidContributionPenalty) * Math.Max(paragonCost, 1));
 
