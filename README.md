@@ -10,6 +10,25 @@ Paragonomics
 
 ### Note: Degree Indicators in Screenshots comes from [Useful Utilities](https://github.com/doombubbles/useful-utilities#readme)
 
+## Paragon Investing
+
+The "Paragon Degree" text is now a button that you can press to invest more money into the
+paragon and increase its degree. This is useful for Subprime Paragons to put more money into them and get them out of
+the negatives, and also just for normal paragons to increase their power without having to sell/rebuy.
+
+![ScreenshotParagonInvesting.png](ScreenshotParagonInvesting.png)
+
+![ScreenshotParagonInvesting2.png](ScreenshotParagonInvesting2.png)
+
+## Set Degrees
+
+If you're in Sandbox mode (or have the "Set Degree Outside Sandbox" Mod Setting turned on),
+you can click directly on the Paragon degree number to set it to whatever you want.
+If you turn on the No Degree Limit setting, you can set it past the standard 100 limit, as shown below.
+Getting too close to the integer overflow limit will lead to undefined behavior.
+
+![ScreenshotSetDegree.png](ScreenshotSetDegree.png)
+
 ## Subprime Paragons
 
 If you have less than the amount of money to required to purchase a Paragon upgrade, you can spend less on it to make a
@@ -30,31 +49,12 @@ The negative degree paragon algorithm is the same as the one for positive degree
 - The flat damage and pierce changes are not included, to prevent those numbers from going to zero
 - The percentage based damage and pierce changes apply are applied like attack speed boosts are, also to prevent those
   numbers from going to all the way to zero
-    - i.e. -25% pierce means dividing by 125% rather than multiplying by 75%
+  - i.e. -25% pierce means dividing by 125% rather than multiplying by 75%
 - The remaining applied changes are scaled by a factor based on how much the paragon upgrade costs in relation to the
   towers
-    - e.g. A full Dart Monkey paragon costs ~250k, with ~100k from the tier 5s, and since no cost investment produces degree -28,
-      the values are scaled so that degree -28 will leave that values at approximately 100k/250k = 40% final strength
+  - e.g. A full Dart Monkey paragon costs ~250k, with ~100k from the tier 5s, and since no cost investment produces degree -28,
+    the values are scaled so that degree -28 will leave that values at approximately 100k/250k = 40% final strength
 
 </details>
-
-## Paragon Investing
-
-The "Paragon Degree" text is now a button that you can press to invest more money into the
-paragon and increase its degree. This is useful for Subprime Paragons to put more money into them and get them out of
-the negatives, and also just for normal paragons to increase their power without having to sell/rebuy.
-
-![ScreenshotParagonInvesting.png](ScreenshotParagonInvesting.png)
-
-![ScreenshotParagonInvesting2.png](ScreenshotParagonInvesting2.png)
-
-## Set Degrees
-
-If you're in Sandbox mode (or have the "Set Degree Outside Sandbox" Mod Setting turned on),
-you can click directly on the Paragon degree number to set it to whatever you want.
-If you turn on the No Degree Limit setting, you can set it past the standard 100 limit, as shown below.
-Getting too close to the integer overflow limit will lead to undefined behavior.
-
-![ScreenshotSetDegree.png](ScreenshotSetDegree.png)
 
 [![Requires BTD6 Mod Helper](https://raw.githubusercontent.com/gurrenm3/BTD-Mod-Helper/master/banner.png)](https://github.com/gurrenm3/BTD-Mod-Helper#readme)
