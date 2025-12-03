@@ -159,7 +159,7 @@ public static class Calculations
             // Make the multiplicative bonuses scale to not go -100%
             // but also increase their base effect since not including the flat modifiers
             var costFactor = GetCostFactor(paragon);
-            var scaledFactor = FactorForBaseDegree(costFactor, 29);
+            var scaledFactor = FactorForBaseDegree(costFactor, 29) * (1 + attackCooldownReductionPercent / 100f);
             percentPierceUp = -(100 + 10000 / (-100 + percentPierceUp * scaledFactor));
             percentDamageUp = -(100 + 10000 / (-100 + percentDamageUp * scaledFactor));
         }

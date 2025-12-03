@@ -1,3 +1,2 @@
-- Fixed for BTD6 v50
-- Fixed the tower selection menu not instantly updating a paragon's displayed degree after investing more cash
-- Added a new setting Linear Scaling Past Limit: Makes the power investment requirement scaling be linear when the degree increases beyond 100, rather than continuing to be exponentially more.
+- Fixed for v52
+- Adjusted the math for Negative Paragon degrees so the pierce and damage doesn't get reduced quite as much per degree

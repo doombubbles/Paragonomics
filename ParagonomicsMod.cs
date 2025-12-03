@@ -95,7 +95,6 @@ public class ParagonomicsMod : BloonsTD6Mod
             {
                 FinishPopup();
                 InvestInParagon(paragon, cash);
-                TowerSelectionMenu.instance.OnTowerSelectionPanelForceUpdate();
                 okCallback?.Invoke(cash);
             }),
             "Do It",
@@ -231,5 +230,10 @@ public class ParagonomicsMod : BloonsTD6Mod
         paragon.PlayParagonUpgradeSound();
         paragon.Finish();
         paragon.entity.GetBehaviorsInDependants<TowerCreateParagonTower>().ForEach(tower => tower.towerAdded = false);
+
+        if (TowerSelectionMenu.instance?.selectedTower?.tower == paragon.tower)
+        {
+            TowerSelectionMenu.instance.OnTowerSelectionPanelForceUpdate();
+        }
     }
 }
