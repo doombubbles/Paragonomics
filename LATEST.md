@@ -1,2 +1,1 @@
-- Fixed for v52
-- Adjusted the math for Negative Paragon degrees so the pierce and damage doesn't get reduced quite as much per degree
+- Recompiled for BTD6 v54
