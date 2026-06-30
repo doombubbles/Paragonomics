@@ -132,32 +132,3 @@ internal static class TowerCreateParagonTower_GetParagonTowerModelTier
 
     }
 }
-
-[HarmonyPatch(typeof(ParagonTowerModel.PowerDegreeMutator), nameof(ParagonTowerModel.PowerDegreeMutator.MutateTower))]
-internal static class PowerDegreeMutator_MutateTower
-{
-    [HarmonyPostfix]
-    internal static void Postfix(ParagonTowerModel.PowerDegreeMutator __instance, TowerModel tower)
-    {
-        tower.GetDescendants<CashModel>().ForEach(cash =>
-        {
-            cash.bonusMultiplier += __instance.percentDamageUp / 100f;
-        });
-
-        tower.GetDescendants<EmissionsPerRoundFilterModel>().ForEach(filter =>
-        {
-            filter.count += Math.CeilToInt(filter.count * __instance.attackCooldownReductionPercent / 100f);
-        });
-
-        tower.GetDescendants<PerRoundCashBonusTowerModel>().ForEach(bonus =>
-        {
-            bonus.cashRoundBonusMultiplier += __instance.percentDamageUp / 100f;
-        });
-
-        tower.GetDescendants<BankModel>().ForEach(bank =>
-        {
-            bank.interest *= 1 + __instance.attackCooldownReductionPercent / 100f;
-            bank.capacity += Math.RoundToNearestInt(bank.capacity * __instance.percentPierceUp / 100f, 500);
-        });
-    }
-}

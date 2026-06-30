@@ -4,6 +4,7 @@ using BTD_Mod_Helper;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Api.ModOptions;
 using BTD_Mod_Helper.Extensions;
+using HarmonyLib;
 using Il2CppAssets.Scripts.Models.Towers.Upgrades;
 using Il2CppAssets.Scripts.Simulation.Towers;
 using Il2CppAssets.Scripts.Simulation.Towers.Behaviors;
@@ -15,6 +16,7 @@ using Paragonomics;
 
 [assembly: MelonInfo(typeof(ParagonomicsMod), ModHelperData.Name, ModHelperData.Version, ModHelperData.RepoOwner)]
 [assembly: MelonGame("Ninja Kiwi", "BloonsTD6")]
+[assembly: MelonGame("Ninja Kiwi", "BloonsTD6-Epic")]
 [assembly: MelonOptionalDependencies("BuffsInShop")]
 
 namespace Paragonomics;
@@ -61,9 +63,9 @@ public class ParagonomicsMod : BloonsTD6Mod
     {
         var gameModel = InGame.instance != null ? InGame.Bridge.Model : Game.instance.model;
 
-        return tower.IsMutatedBy("HonoraryParagon")
-                   ? gameModel.GetUpgrade("HonoraryParagon_" + tower.towerModel.name)
-                   : gameModel.GetParagonUpgradeForTowerId(tower.towerModel.baseId);
+        return tower.IsMutatedBy("HonoraryParagon") && ModHelper.HasMod("HonoraryParagons", out var honoraryParagons)
+            ? honoraryParagons.Call<UpgradeModel>("GetParagonUpgrade", gameModel, tower.towerModel)
+            : gameModel.GetParagonUpgradeForTowerId(tower.towerModel.baseId);
     }
 
     public static bool HasEnoughToShowPopup(Tower tower)

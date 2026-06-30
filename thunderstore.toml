@@ -1,0 +1,31 @@
+[package]
+name = "Paragonomics"
+namespace = "doombubbles"
+description = "Adds new ways to change Paragon degrees using cash."
+websiteUrl = "https://github.com/doombubbles/Paragonomics"
+
+[package.dependencies]
+LavaGang-MelonLoader = "0.7.3"
+doombubbles-Btd6ModHelper = "3.6.5"
+
+[build]
+icon = "./Icon.png"
+readme = "./README.md"
+outdir = "bin"
+
+[[build.copy]]
+source = "./bin/Release/Paragonomics.dll"
+target = "Paragonomics.dll"
+
+[[build.copy]]
+source = "./CHANGELOG.md"
+target = "./CHANGELOG.md"
+
+[[build.copy]]
+source = "./LICENSE"
+target = "./LICENSE"
+
+[publish]
+repository = "https://thunderstore.io"
+communities = ["bloons-td-6"]
+categories = ["mods"]

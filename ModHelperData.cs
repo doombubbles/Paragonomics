@@ -16,5 +16,6 @@ public static class ModHelperData
         """;
 
     public const string RepoOwner = "doombubbles";
-    public const string RepoName = "paragonomics";
+    public const string PrevRepoName = "paragonomics";
+    public const string RepoName = "Paragonomics";
 }
