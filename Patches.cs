@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using BTD_Mod_Helper.Api;
 using BTD_Mod_Helper.Api.Components;
 using BTD_Mod_Helper.Api.Enums;
 using BTD_Mod_Helper.Extensions;
 using HarmonyLib;
+using Il2CppAssets.Scripts.Models;
 using Il2CppAssets.Scripts.Models.Effects;
 using Il2CppAssets.Scripts.Models.Towers;
 using Il2CppAssets.Scripts.Models.Towers.Behaviors;
@@ -130,5 +132,40 @@ internal static class TowerCreateParagonTower_GetParagonTowerModelTier
         __result = __instance.behaviourModel.towerModels[0];
         return false;
 
+    }
+}
+
+/// <summary>
+/// Fix negative paragon degree scaling the Paragon Sniper Single Out ability's damage ramp to be negative
+/// </summary>
+[HarmonyPatch(typeof(ParagonTowerModel.PowerDegreeMutator), nameof(ParagonTowerModel.PowerDegreeMutator.Mutate))]
+internal static class PowerDegreeMutator_Mutate
+{
+    [HarmonyPrefix]
+    internal static void Prefix(ParagonTowerModel.PowerDegreeMutator __instance, Model model,
+        ref (SniperParagonAbilityWeaponBehaviorModel behavior, float original)[] __state)
+    {
+        if (__instance.percentDamageUp >= 0) return;
+
+        __state = model.GetDescendants<SniperParagonAbilityWeaponBehaviorModel>().ToIl2CppList()
+            .ToArray()
+            .Select(behavior => (behavior, behavior.damageIncreasePerSecondPercentage))
+            .ToArray();
+    }
+
+    [HarmonyPostfix]
+    internal static void Postfix(ParagonTowerModel.PowerDegreeMutator __instance,
+        (SniperParagonAbilityWeaponBehaviorModel behavior, float original)[] __state)
+    {
+        if (__state == null) return;
+
+        foreach (var (behavior, original) in __state)
+        {
+            behavior.damageIncreasePerSecondPercentage = original;
+            behavior.baseShootingDamage =
+                (int) System.Math.Round(behavior.baseShootingDamage * (1 + __instance.percentDamageUp / 100));
+            behavior.damageIncreasePerFrame =
+                (int) (behavior.baseShootingDamage * behavior.damageIncreasePerSecondPercentage / 60);
+        }
     }
 }

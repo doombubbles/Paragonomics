@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-11-02
+
+- Fixed negative paragon degree scaling the Paragon Sniper Single Out ability's damage ramp to be negative
+
 ## [1.0.7] - 2026-08-06
 
 - Fixed for BTD6 v56
@@ -45,7 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
-[unreleased]: https://github.com/doombubbles/Paragonomics/compare/1.0.7...HEAD
+[unreleased]: https://github.com/doombubbles/Paragonomics/compare/1.0.8...HEAD
+[1.0.8]: https://github.com/doombubbles/Paragonomics/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/doombubbles/Paragonomics/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/doombubbles/Paragonomics/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/doombubbles/Paragonomics/compare/1.0.4...1.0.5
